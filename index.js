@@ -1,12 +1,25 @@
 // DOM elements.
-var clicker = document.getElementById ('clicker');
+var progressNode = document.getElementById ('clicker');
 
 // Game stuff.
+var progress = 0;
 var clickInterval = null;
+
 var items = new Map ();
 
-// Audio
-var rewardAudio = new Audio ('resources/reward.wav');
+// Audio.
+var progressAudio = new Audio ('resources/progress.wav');
+progressAudio.loop = true;
+progressAudio.volume = 0.3;
+var rewardAudios = [new Audio ('resources/reward.wav'),
+						  new Audio ('resources/reward2.wav'),
+						  new Audio ('resources/reward3.wav')];
+
+
+
+function rewardPlay () {
+	 rewardAudios[Math.floor (Math.random () * rewardAudios.length)].play ();
+}
 
 function Item (name, src) {
 	 this.name = name;
@@ -15,19 +28,22 @@ function Item (name, src) {
 	 this.count = 1;
 	 this.node = document.createElement ('tr');
 	 this.imageColumn = document.createElement ('td');
-	 this.textColumn = document.createElement ('td');
-	 this.text = document.createElement ('span');
+	 this.countColumn = document.createElement ('td');
+	 this.nameColumn = document.createElement ('td');
 
 	 this.imageColumn.appendChild (this.image);
 	 
 	 this.node.appendChild (this.imageColumn);
-	 this.node.appendChild (this.textColumn);
-
-	 this.textColumn.innerText = ' ' + this.name + ' (' + this.count + ')';
+	 this.node.appendChild (this.countColumn);
+	 this.node.appendChild (this.nameColumn);
+	 
+	 this.countColumn.innerText = this.count;
+	 this.nameColumn.innerText = this.name;
 	 document.getElementById ('inventory').appendChild (this.node);
 	 
 	 this.updateNode = function () {
-		  this.textColumn.innerText = ' ' + this.name + ' (' + this.count + ')';
+		  this.countColumn.innerText = this.count;
+		  this.nameColumn.innerText = this.name;
 	 }
 	 
 	 this.increment = function () {
@@ -45,17 +61,19 @@ function itemsAdd (name, src) {
 }
 
 function click () {
-	 clicker.value++;
+	 console.log ('Click!');
+	 progress++;
+	 progressNode.style.width = progress + "%";
 
-	 if (clicker.value >= 100) {
-		  rewardAudio.play ();
+	 if (progress >= 100) {
+		  rewardPlay ();
 
 		  var chance = Math.random ();
 
 		  if (chance < 0.25){
-				itemsAdd ('Shoe', '')
+				itemsAdd ('Shoe', 'resources/shoe.svg')
 		  } else {
-				itemsAdd ('Fish', '');
+				itemsAdd ('Fish', 'resources/fish.svg');
 		  }
 		  
 		  stopClicking ();
@@ -64,11 +82,17 @@ function click () {
 }
 
 function startClicking () {
+	 progressAudio.currentTime = 0;
+	 progressAudio.play ();
+	 
 	 clearInterval (clickInterval);
-	 clickInterval = setInterval (click, 20)
+	 clickInterval = setInterval (click, 20);
 }
 
 function stopClicking () {
+	 progressAudio.pause ();
+	 
 	 clearInterval (clickInterval);
-	 clicker.value = 0;
+	 progress = 0;
+	 progressNode.style.width = progress + "%";
 }

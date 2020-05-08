@@ -1,54 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Nova+Oval&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Galindo&display=swap');
 
 body {
 	 margin: 0 !important;
 	 overflow: hidden !important;
-
-	 background: LightYellow;
-
-	 font-family: 'Nova Oval', cursive;
 }
 
-progress[value] {
-	 -webkit-appearance: none;
-	 appearance: none;
+#container {
+	 display: flex;
+	 flex-flow: column nowrap;
+	 align-items: stretch;
+	 align-content: stretch;
 
 	 width: 100vw;
-	 height: 10vh;
+	 height: 100vh;
+
+	 font-family: 'Galindo', cursive;
 }
 
-/* This is the progress bar container. */
+#container * {
+	 flex: 1;
 
-progress[value]::-webkit-progress-bar {
-  background-color: Moccasin;
+	 background: MediumSlateBlue;
 }
 
-progress[value]::-webkit-progress-bar:hover {
-  background-color: Bisque;
+#clicker-container {
+	 flex: 0.5;
+
+	 background: SlateBlue;
 }
 
-progress[value]::-webkit-progress-bar:active {
-  background-color: PeachPuff;
+#inventory {
+	 padding: 1em;
+	 width: 100%;
+	 
+	 table-layout: fixed;
 }
 
-/* This is the actual progress bar bar. */
-
-progress[value]::-webkit-progress-value {
-	 background: -webkit-linear-gradient(45deg, gold, yellow);
-
-	 border-radius: 0 1em 1em 0;
+#inventory img {
+	 width: 1em;
+	 height: 1em;
 }
 
-/* The label on top of the progress bar. */
+/* The progress bar. */
 
-span#clickerLabel {
-	 position: absolute;
-	 top: calc(5vh - 0.5em);
-	 left: calc(50vw - 1em);
+#clicker {
+	 height: 100%;
+	 
+	 background: orange;
+}
 
-	 font-weight: bold;
-	 font-size: 3em;
+/* For desktops. */
 
-	 color: #111;
-	 mix-blend-mode: difference;
+@media only screen and (min-width: 768px) {
+	 #container {
+		  flex-flow: row nowrap;
+	 }
 }

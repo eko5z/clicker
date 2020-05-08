@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html>
   <head>
-	 <title>FreeFish</title>
+	 <title>Clicker</title>
 	 <link rel="stylesheet" href="index.css">
-	 <link href="https://fonts.googleapis.com/css2?family=Freckle+Face&display=swap" rel="stylesheet">
 	 <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
 
   <body>
+	 <div id="container">
+		<div id="inventory-container">
+		  <table id="inventory">
+		  </table>
+		</div>
 
-	 <!-- The clicker part. -->
-	 
-	 <progress id="clicker" value="0" max="100"
-				  onmousedown="startClicking ()"
-				  onmouseup="stopClicking ()">
-	 </progress>
+		<div id="clicker-container" onmousedown="startClicking ()"
+			  onmouseup="stopClicking ()" ontouchstart="startClicking ()"
+			  ontouchcancel="stopClicking ()">
+		  <div id="clicker" style="width:0%"></div>
+		</div>
+		
+		<div id="shop-container">
+		</div>
+	 </div>
 
-	 <span id="clickerLabel">CLICK!</span>
-
-	 <!-- The inventory. -->
-	 
-	 <table id="inventory">
-	 </table>
-	 
 	 <script src="index.js"></script>
   </body>
 </html>
