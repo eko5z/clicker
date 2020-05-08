@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Nova+Oval&display=swap');
+
+body {
+	 margin: 0 !important;
+	 overflow: hidden !important;
+
+	 background: LightYellow;
+
+	 font-family: 'Nova Oval', cursive;
+}
+
+progress[value] {
+	 -webkit-appearance: none;
+	 appearance: none;
+
+	 width: 100vw;
+	 height: 10vh;
+}
+
+/* This is the progress bar container. */
+
+progress[value]::-webkit-progress-bar {
+  background-color: Moccasin;
+}
+
+progress[value]::-webkit-progress-bar:hover {
+  background-color: Bisque;
+}
+
+progress[value]::-webkit-progress-bar:active {
+  background-color: PeachPuff;
+}
+
+/* This is the actual progress bar bar. */
+
+progress[value]::-webkit-progress-value {
+	 background: -webkit-linear-gradient(45deg, gold, yellow);
+
+	 border-radius: 0 1em 1em 0;
+}
+
+/* The label on top of the progress bar. */
+
+span#clickerLabel {
+	 position: absolute;
+	 top: calc(5vh - 0.5em);
+	 left: calc(50vw - 1em);
+
+	 font-weight: bold;
+	 font-size: 3em;
+
+	 color: #111;
+	 mix-blend-mode: difference;
+}

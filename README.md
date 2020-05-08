@@ -1,2 +1,0 @@
-# clicker
-Clicker in JS.
