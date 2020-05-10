@@ -32,24 +32,20 @@ function Item (name, count, price, src) {
 	 this.imageColumn = document.createElement ('td');
 	 this.countColumn = document.createElement ('td');
 	 this.nameColumn = document.createElement ('td');
-	 this.priceColumn = document.createElement ('td');
 
 	 this.sellColumn = document.createElement ('td');
 	 this.sellButton = document.createElement ('button');
-	 this.sellButton.innerHTML = 'Sell';
-
 	 this.sellAllColumn = document.createElement ('td');
 	 this.sellAllButton = document.createElement ('button');
-	 this.sellAllButton.innerHTML = 'Sell All';
 	 
 	 this.sellButton.onclick = (function () {
 		  itemsRemove (this.name, 1);
-		  itemsAdd ('Money', this.price, 1, '');
+		  itemsAdd ('Money', this.price, 1, 'resources/money.svg');
 	 }).bind (this);
 
 	 this.sellAllButton.onclick = (function () {
 		  itemsRemove (this.name, this.count);
-		  itemsAdd ('Money', this.count * this.price, 1, '');
+		  itemsAdd ('Money', this.count * this.price, 1, 'resources/money.svg');
 	 }).bind (this);
 	 
 	 this.sellColumn.appendChild (this.sellButton);
@@ -60,19 +56,21 @@ function Item (name, count, price, src) {
 	 this.node.appendChild (this.imageColumn);
 	 this.node.appendChild (this.countColumn);
 	 this.node.appendChild (this.nameColumn);
-	 this.node.appendChild (this.priceColumn);
 	 this.node.appendChild (this.sellColumn);
 	 this.node.appendChild (this.sellAllColumn);
 	 
 	 this.countColumn.innerText = this.count;
 	 this.nameColumn.innerText = this.name;
-	 this.priceColumn.innerText = this.price;
+	 this.sellButton.innerHTML = "Sell (" + this.price + ")";
+	 this.sellAllButton.innerHTML = "Sell All (" + this.price * this.count + ")";
+	 
 	 document.getElementById ('inventory').appendChild (this.node);
 	 
 	 this.updateNode = function () {
 		  this.countColumn.innerText = this.count;
 		  this.nameColumn.innerText = this.name;
-		  this.priceColumn.innerText = this.price;
+		  this.sellButton.innerHTML = "Sell (" + this.price + ")";
+		  this.sellAllButton.innerHTML = "Sell All (" + this.price * this.count + ")";
 	 }
 
 	 this.removeNode = function () {

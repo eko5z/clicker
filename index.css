@@ -29,6 +29,8 @@ body {
 	 background: SlateBlue;
 }
 
+/* Other shit. */
+
 #inventory {
 	 padding: 1em;
 	 width: 100%;
@@ -36,9 +38,30 @@ body {
 	 table-layout: fixed;
 }
 
+#inventory td {
+	 text-align: center;
+}
+
 #inventory img {
 	 width: 1em;
 	 height: 1em;
+}
+
+#inventory button {
+	 width: 100%;
+
+	 background: SlateBlue;
+	 border: none;
+	 font-family: 'Galindo', cursive;
+}
+
+#inventory button:active {
+	 background: Orange;
+	 border: none;
+}
+
+#inventory button:focus {
+	 border: 1px dotted SlateBlue;
 }
 
 /* The progress bar. */
