@@ -21,42 +21,91 @@ function rewardPlay () {
 	 rewardAudios[Math.floor (Math.random () * rewardAudios.length)].play ();
 }
 
-function Item (name, src) {
+function Item (name, count, price, src) {
 	 this.name = name;
 	 this.image = new Image ();
 	 this.image.src = src;
-	 this.count = 1;
+	 this.count = count;
+	 this.price = price;
+	 
 	 this.node = document.createElement ('tr');
 	 this.imageColumn = document.createElement ('td');
 	 this.countColumn = document.createElement ('td');
 	 this.nameColumn = document.createElement ('td');
+	 this.priceColumn = document.createElement ('td');
+
+	 this.sellColumn = document.createElement ('td');
+	 this.sellButton = document.createElement ('button');
+	 this.sellButton.innerHTML = 'Sell';
+
+	 this.sellAllColumn = document.createElement ('td');
+	 this.sellAllButton = document.createElement ('button');
+	 this.sellAllButton.innerHTML = 'Sell All';
+	 
+	 this.sellButton.onclick = (function () {
+		  itemsRemove (this.name, 1);
+		  itemsAdd ('Money', this.price, 1, '');
+	 }).bind (this);
+
+	 this.sellAllButton.onclick = (function () {
+		  itemsRemove (this.name, this.count);
+		  itemsAdd ('Money', this.count * this.price, 1, '');
+	 }).bind (this);
+	 
+	 this.sellColumn.appendChild (this.sellButton);
+	 this.sellAllColumn.appendChild (this.sellAllButton);
 
 	 this.imageColumn.appendChild (this.image);
 	 
 	 this.node.appendChild (this.imageColumn);
 	 this.node.appendChild (this.countColumn);
 	 this.node.appendChild (this.nameColumn);
+	 this.node.appendChild (this.priceColumn);
+	 this.node.appendChild (this.sellColumn);
+	 this.node.appendChild (this.sellAllColumn);
 	 
 	 this.countColumn.innerText = this.count;
 	 this.nameColumn.innerText = this.name;
+	 this.priceColumn.innerText = this.price;
 	 document.getElementById ('inventory').appendChild (this.node);
 	 
 	 this.updateNode = function () {
 		  this.countColumn.innerText = this.count;
 		  this.nameColumn.innerText = this.name;
+		  this.priceColumn.innerText = this.price;
 	 }
-	 
-	 this.increment = function () {
-		  this.count++;
-	 };
+
+	 this.removeNode = function () {
+		  this.node.remove ();
+	 }
+
+
+	 this.add = function (n) {
+		  this.count += n;
+	 }
 }
 
-function itemsAdd (name, src) {
+function itemsAdd (name, count, price, src) {
 	 if (items.has (name)) {
-		  items.get (name).increment ();
+		  items.get (name).add (count);
 		  items.get (name).updateNode ();
 	 } else {
-		  items.set (name, new Item (name, src));
+		  items.set (name, new Item (name, count, price, src));
+	 }
+}
+
+function itemsRemove (name, count) {
+	 if (items.has (name)) {
+		  var item = items.get (name);
+
+		  if (item.count <= count) {
+				item.removeNode ();
+				items.delete (name);
+		  } else {
+				item.count -= count;
+		  }
+
+		  item.updateNode ();
 	 }
 }
 
@@ -71,9 +120,9 @@ function click () {
 		  var chance = Math.random ();
 
 		  if (chance < 0.25){
-				itemsAdd ('Shoe', 'resources/shoe.svg')
+				itemsAdd ('Shoe', 1, 1, 'resources/shoe.svg')
 		  } else {
-				itemsAdd ('Fish', 'resources/fish.svg');
+				itemsAdd ('Fish', 1, 3, 'resources/fish.svg');
 		  }
 		  
 		  stopClicking ();
