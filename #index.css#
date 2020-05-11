@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Galindo&display=swap');
+
+body {
+	 margin: 0 !important;
+	 overflow: hidden !important;
+}
+
+#container {
+	 display: flex;
+	 flex-flow: column nowrap;
+	 align-items: stretch;
+	 align-content: stretch;
+
+	 width: 100vw;
+	 height: 100vh;
+
+	 font-family: 'Galindo', cursive;
+}
+
+#container * {
+	 flex: 1;
+
+	 background: MediumSlateBlue;
+}
+
+#clicker-container {
+	 flex: 0.5;
+
+	 background: SlateBlue;
+}
+
+/* Other shit. */
+
+#inventory, #shop {
+	 padding: 1em;
+	 width: 100%;
+	 
+	 table-layout: fixed;
+}
+
+#inventory td, #shop td {
+	 text-align: center;
+}
+
+/* Epic animation. */
+
+@keyframes image-gimmick {
+	 0% {
+		  transform: rotate(-50deg) scale(1.5);
+	 }
+
+	 50% {
+		  transform: rotate(50deg) scale(1);
+	 }
+
+	 100% {
+		  transform: rotate(-50deg) scale(1.5);
+	 }
+}
+
+#inventory img, #shop img {
+	 width: 1em;
+	 height: 1em;
+
+	 animation: image-gimmick 2s infinite;
+}
+
+#inventory button, #shop button {
+	 background: SlateBlue;
+	 border: none;
+	 font-family: 'Galindo', cursive;
+}
+
+#inventory button:active, #inventory button:active {
+	 background: Orange;
+	 border: none;
+}
+
+#inventory input {
+	 appearance: none;
+	 -webkit-appearance: none;
+
+	 height: 2em;
+	 width: 2em;
+
+	 background: SlateBlue;
+}
+
+#inventory input:checked {
+	 background: Orange;
+	 border: 0.3em solid SlateBlue;
+}
+
+/* The progress bar. */
+
+#clicker {
+	 height: 100%;
+	 
+	 background: orange;
+}
+
+/* For desktops. */
+
+@media only screen and (min-width: 768px) {
+	 #container {
+		  flex-flow: row nowrap;
+	 }
+}
