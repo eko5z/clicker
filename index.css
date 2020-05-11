@@ -31,40 +31,20 @@ body {
 
 /* Other shit. */
 
-#inventory {
+#inventory, #shop {
 	 padding: 1em;
 	 width: 100%;
 	 
 	 table-layout: fixed;
 }
 
-#inventory td {
+#inventory td, #shop td {
 	 text-align: center;
 }
 
 /* Epic animation. */
 
 @keyframes image-gimmick {
-	 /* 0% { */
-	 /* 	  transform: rotate(0deg); */
-	 /* } */
-
-	 /* 25% { */
-	 /* 	  transform: rotate(50deg); */
-	 /* } */
-
-	 /* 50% { */
-	 /* 	  transform: rotate(0deg); */
-	 /* } */
-
-	 /* 75% { */
-	 /* 	  transform: rotate(-50deg); */
-	 /* } */
-
-	 /* 100% { */
-	 /* 	  transform: rotate(0deg); */
-	 /* } */
-
 	 0% {
 		  transform: rotate(-50deg) scale(1.5);
 	 }
@@ -78,23 +58,37 @@ body {
 	 }
 }
 
-#inventory img {
-	 
+#inventory img, #shop img {
 	 width: 1em;
 	 height: 1em;
 
 	 animation: image-gimmick 2s infinite;
 }
 
-#inventory button {
+#inventory button, #shop button {
 	 background: SlateBlue;
 	 border: none;
 	 font-family: 'Galindo', cursive;
 }
 
-#inventory button:active {
+#inventory button:active, #inventory button:active {
 	 background: Orange;
 	 border: none;
+}
+
+#inventory input {
+	 appearance: none;
+	 -webkit-appearance: none;
+
+	 height: 2em;
+	 width: 2em;
+
+	 background: SlateBlue;
+}
+
+#inventory input:checked {
+	 background: Orange;
+	 border: 0.3em solid SlateBlue;
 }
 
 /* The progress bar. */

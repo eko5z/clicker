@@ -8,7 +8,11 @@ var clickInterval = null;
 var items = new Map ();
 
 var dropModifier = 2;
-var progressSpeed 
+var progressSpeed = 2;		  // In seconds.
+
+var base_threshold = 5;
+var threshold = 125;				  // The threshold till new item
+// appears.
 
 // Audio.
 var progressAudio = new Audio ('resources/progress.wav');
@@ -17,14 +21,14 @@ progressAudio.volume = 0.3;
 var rewardAudios = [new Audio ('resources/reward.wav'),
 						  new Audio ('resources/reward2.wav'),
 						  new Audio ('resources/reward3.wav')];
-var sellAudio = new Audio ('resources/sell.wav');
+var sellBuyAudio = new Audio ('resources/sell.wav');
 
 
 function rewardPlay () {
 	 rewardAudios[Math.floor (Math.random () * rewardAudios.length)].play ();
 }
 
-function Item (name, count, price, sellable, src) {
+function Item (name, count, price, sellable, buyable, activatable, modifiers, src) {
 	 this.name = name;
 	 this.image = new Image ();
 	 this.image.src = src;
@@ -32,41 +36,93 @@ function Item (name, count, price, sellable, src) {
 	 this.price = price;
 	 this.sellable = sellable;
 	 
-	 // Upgrade stuff.
-	 this.activatable = false;
-	 
 	 // Initialize shit.
 	 this.node = document.createElement ('tr');
 	 this.imageColumn = document.createElement ('td');
 	 this.countColumn = document.createElement ('td');
 	 this.nameColumn = document.createElement ('td');
-	 this.sellColumn = document.createElement ('td');
-	 this.sellAllColumn = document.createElement ('td');
+	 this.sellBuyColumn = document.createElement ('td');
+	 this.sellBuyAllColumn = document.createElement ('td');
+	 this.activateColumn = document.createElement ('td');
 	 
 	 if (sellable) {
-		  this.sellButton = document.createElement ('button');
-		  this.sellAllButton = document.createElement ('button');
+		  this.sellBuyButton = document.createElement ('button');
+		  this.sellBuyAllButton = document.createElement ('button');
 		  
-		  this.sellButton.onclick = (function () {
-				sellAudio.currentTime = 0;
-				sellAudio.play ();
+		  this.sellBuyButton.onclick = (function () {
+				sellBuyAudio.currentTime = 0;
+				sellBuyAudio.play ();
 				
 				itemsRemove (this.name, 1);
-				itemsAdd ('Money', this.price, 1, false, 'resources/money.svg');
+				itemsAdd ('Money', this.price, 1, false, false, false, null, 'resources/money.svg');
+
+				thresholdRandomItem ();
 		  }).bind (this);
 
-		  this.sellAllButton.onclick = (function () {
-				sellAudio.currentTime = 0;
-				sellAudio.play ();
+		  this.sellBuyAllButton.onclick = (function () {
+				sellBuyAudio.currentTime = 0;
+				sellBuyAudio.play ();
 				
 				itemsRemove (this.name, this.count);
-				itemsAdd ('Money', this.count * this.price, 1, false, 'resources/money.svg');
+				itemsAdd ('Money', this.count * this.price, 1, false, false, false, null, 'resources/money.svg');
+
+				thresholdRandomItem ();
 		  }).bind (this);
 		  
-		  this.sellColumn.appendChild (this.sellButton);
-		  this.sellAllColumn.appendChild (this.sellAllButton);
-		  this.sellButton.innerHTML = "Sell (" + this.price + ")";
-		  this.sellAllButton.innerHTML = "Sell All (" + this.price * this.count + ")";
+		  this.sellBuyColumn.appendChild (this.sellBuyButton);
+		  this.sellBuyButton.innerHTML = "Sell (" + this.price + ")";
+
+		  if (!activatable) {
+				this.sellBuyAllColumn.appendChild (this.sellBuyAllButton);
+				this.sellBuyAllButton.innerHTML = "Sell All (" + this.price * this.count + ")";
+		  }
+	 }
+
+	 if (buyable) {
+		  this.sellBuyButton = document.createElement ('button');
+		  
+		  this.sellBuyButton.onclick = (function () {
+				sellBuyAudio.currentTime = 0;
+				sellBuyAudio.play ();
+
+				if (items.has ('Money')) {
+					 var money = items.get ('Money');
+
+					 if (money.count >= this.price * this.count) {
+						  itemsRemove ('Money', this.count * this.price);
+						  itemsRemove (this.name, this.count);
+						  itemsAdd (this.name, this.count, Math.ceil (this.price / 2), true, false, this.activatable, this.modifiers, this.image.src);
+					 }
+				}
+		  }).bind (this);
+		  
+		  this.sellBuyColumn.appendChild (this.sellBuyButton);
+		  this.sellBuyButton.innerHTML = "Buy (" + this.price * this.count + ")";
+	 }
+
+	 // Upgrade stuff.
+
+	 if (activatable) {
+		  this.activatable = activatable;
+		  // Modifiers look like this { drop: n, progress: m }
+		  this.modifiers = modifiers;
+	 }
+	 
+	 if (activatable && !buyable) {
+		  this.activateCheckbox = document.createElement ('input');
+		  this.activateCheckbox.type = 'checkbox';
+
+		  this.activateCheckbox.onclick = (function () {
+				if (this.activateCheckbox.checked == true) {
+					 console.log ('Enabling modifiers.');
+					 this.on ();
+				} else {
+					 console.log ('Disabling modifiers.');
+					 this.off ();
+				}
+		  }).bind (this);
+		  
+		  this.activateColumn.appendChild (this.activateCheckbox);
 	 }
 	 
 	 this.imageColumn.appendChild (this.image);
@@ -74,21 +130,37 @@ function Item (name, count, price, sellable, src) {
 	 this.node.appendChild (this.imageColumn);
 	 this.node.appendChild (this.countColumn);
 	 this.node.appendChild (this.nameColumn);
-	 this.node.appendChild (this.sellColumn);
-	 this.node.appendChild (this.sellAllColumn);
+	 this.node.appendChild (this.sellBuyColumn);
+	 this.node.appendChild (this.sellBuyAllColumn);
+	 this.node.appendChild (this.activateColumn);
+
+	 if (!activatable) {
+		  this.countColumn.innerText = this.count;
+	 }
 	 
-	 this.countColumn.innerText = this.count;
 	 this.nameColumn.innerText = this.name;
-	 
-	 document.getElementById ('inventory').appendChild (this.node);
+
+	 if (sellable || (!sellable && !buyable)) {
+		  document.getElementById ('inventory').appendChild (this.node);
+	 } else if (buyable) {
+		  document.getElementById ('shop').appendChild (this.node);
+	 }
 	 
 	 this.updateNode = function () {
-		  this.countColumn.innerText = this.count;
+		  if (!activatable) {
+				this.countColumn.innerText = this.count;
+		  }
+		  
 		  this.nameColumn.innerText = this.name;
 
 		  if (sellable) {
-				this.sellButton.innerHTML = "Sell (" + this.price + ")";
-				this.sellAllButton.innerHTML = "Sell All (" + this.price * this.count + ")";
+				this.sellBuyButton.innerHTML = "Sell (" + this.price + ")";
+
+				if (!activatable) {
+					 this.sellBuyAllButton.innerHTML = "Sell All (" + this.price * this.count + ")";
+				}
+		  } else if (buyable) {
+				this.sellBuyButton.innerHTML = "Buy (" + this.price * this.count + ")";
 		  }
 	 }
 
@@ -100,14 +172,30 @@ function Item (name, count, price, sellable, src) {
 	 this.add = function (n) {
 		  this.count += n;
 	 }
+
+	 // Upgrade functions.
+
+	 this.on = function () {
+		  dropModifier += this.modifiers.drop;
+		  progressSpeed += this.modifiers.progress;
+	 }
+
+	 this.off = function () {
+		  dropModifier -= this.modifiers.drop;
+		  progressSpeed -= this.modifiers.progress;
+	 }
 }
 
-function itemsAdd (name, count, price, sellable, src) {
+function itemsAdd (name, count, price, sellable, buyable, activatable, modifiers, src) {
 	 if (items.has (name)) {
-		  items.get (name).add (count);
-		  items.get (name).updateNode ();
+		  var item = items.get (name);
+
+		  if (!activatable && !item.activatable) {
+				item.add (count);
+				item.updateNode ();
+		  }
 	 } else {
-		  items.set (name, new Item (name, count, price, sellable, src));
+		  items.set (name, new Item (name, count, price, sellable, buyable, activatable, modifiers, src));
 	 }
 }
 
@@ -126,6 +214,19 @@ function itemsRemove (name, count) {
 	 }
 }
 
+function thresholdRandomItem () {
+	 if (items.has ('Money')) {
+		  var money = items.get ('Money');
+
+		  if (money.count >= threshold) {
+				// Add the item...
+				itemsAdd ('Fishing Rod of Doom', 1, 200, false, true, true, { drop: 2, progress: -0.5 }, 'resources/rod.svg');
+
+				threshold += Math.pow (base_threshold, Math.ceil (Math.random () * 5));
+		  }
+	 }
+}
+
 function click () {
 	 progress++;
 	 progressNode.style.width = progress + "%";
@@ -134,11 +235,12 @@ function click () {
 		  rewardPlay ();
 
 		  var chance = Math.random ();
+		  var number = dropModifier + Math.ceil (Math.random () * dropModifier * 2);
 
 		  if (chance < 0.25){
-				itemsAdd ('Shoe', 1, 1, true, 'resources/shoe.svg')
+				itemsAdd ('Shoe', number, 1, true, false, false, null, 'resources/shoe.svg')
 		  } else {
-				itemsAdd ('Fish', 1, 3, true, 'resources/fish.svg');
+				itemsAdd ('Fish', number, 3, true, false, false, null, 'resources/fish.svg');
 		  }
 		  
 		  stopClicking ();
@@ -151,7 +253,7 @@ function startClicking () {
 	 progressAudio.play ();
 	 
 	 clearInterval (clickInterval);
-	 clickInterval = setInterval (click, 20);
+	 clickInterval = setInterval (click, progressSpeed * 10);
 }
 
 function stopClicking () {

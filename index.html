@@ -7,20 +7,26 @@
 	 <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
 
-  <body>
+  <body onmouseup="stopClicking ()" ontouchcancel="stopClicking ()"
+		  ondragstart="return false;"
+		  ondrop="return false;">
 	 <div id="container">
 		<div id="inventory-container">
 		  <table id="inventory">
 		  </table>
 		</div>
 
-		<div id="clicker-container" onmousedown="startClicking ()"
-			  onmouseup="stopClicking ()" ontouchstart="startClicking ()"
+		<div id="clicker-container"
+			  onmousedown="startClicking ()"
+			  onmouseup="stopClicking ()"
+			  ontouchstart="startClicking ()"
 			  ontouchcancel="stopClicking ()">
 		  <div id="clicker" style="width:0%"></div>
 		</div>
 		
 		<div id="shop-container">
+		  <table id="shop">
+		  </table>
 		</div>
 	 </div>
 
