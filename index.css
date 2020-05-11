@@ -42,14 +42,51 @@ body {
 	 text-align: center;
 }
 
+/* Epic animation. */
+
+@keyframes image-gimmick {
+	 /* 0% { */
+	 /* 	  transform: rotate(0deg); */
+	 /* } */
+
+	 /* 25% { */
+	 /* 	  transform: rotate(50deg); */
+	 /* } */
+
+	 /* 50% { */
+	 /* 	  transform: rotate(0deg); */
+	 /* } */
+
+	 /* 75% { */
+	 /* 	  transform: rotate(-50deg); */
+	 /* } */
+
+	 /* 100% { */
+	 /* 	  transform: rotate(0deg); */
+	 /* } */
+
+	 0% {
+		  transform: rotate(-50deg) scale(1.5);
+	 }
+
+	 50% {
+		  transform: rotate(50deg) scale(1);
+	 }
+
+	 100% {
+		  transform: rotate(-50deg) scale(1.5);
+	 }
+}
+
 #inventory img {
+	 
 	 width: 1em;
 	 height: 1em;
+
+	 animation: image-gimmick 2s infinite;
 }
 
 #inventory button {
-	 width: 100%;
-
 	 background: SlateBlue;
 	 border: none;
 	 font-family: 'Galindo', cursive;
@@ -58,10 +95,6 @@ body {
 #inventory button:active {
 	 background: Orange;
 	 border: none;
-}
-
-#inventory button:focus {
-	 border: 1px dotted SlateBlue;
 }
 
 /* The progress bar. */
