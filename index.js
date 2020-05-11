@@ -28,10 +28,11 @@ function rewardPlay () {
 	 rewardAudios[Math.floor (Math.random () * rewardAudios.length)].play ();
 }
 
-function Item (name, count, price, sellable, buyable, activatable, modifiers, src) {
+function Item (name, count, price, sellable, buyable, activatable, modifiers, tooltip, src) {
 	 this.name = name;
 	 this.image = new Image ();
 	 this.image.src = src;
+	 this.image.title = tooltip;
 	 this.count = count;
 	 this.price = price;
 	 this.sellable = sellable;
@@ -54,7 +55,7 @@ function Item (name, count, price, sellable, buyable, activatable, modifiers, sr
 				sellBuyAudio.play ();
 				
 				itemsRemove (this.name, 1);
-				itemsAdd ('Money', this.price, 1, false, false, false, null, 'resources/money.svg');
+				itemsAdd ('Money', this.price, 1, false, false, false, null, 'Money', 'resources/money.svg');
 
 				thresholdRandomItem ();
 		  }).bind (this);
@@ -64,7 +65,7 @@ function Item (name, count, price, sellable, buyable, activatable, modifiers, sr
 				sellBuyAudio.play ();
 				
 				itemsRemove (this.name, this.count);
-				itemsAdd ('Money', this.count * this.price, 1, false, false, false, null, 'resources/money.svg');
+				itemsAdd ('Money', this.count * this.price, 1, false, false, false, null, 'Money', 'resources/money.svg');
 
 				thresholdRandomItem ();
 		  }).bind (this);
@@ -91,7 +92,7 @@ function Item (name, count, price, sellable, buyable, activatable, modifiers, sr
 					 if (money.count >= this.price * this.count) {
 						  itemsRemove ('Money', this.count * this.price);
 						  itemsRemove (this.name, this.count);
-						  itemsAdd (this.name, this.count, Math.ceil (this.price / 2), true, false, this.activatable, this.modifiers, this.image.src);
+						  itemsAdd (this.name, this.count, Math.ceil (this.price / 2), true, false, this.activatable, this.modifiers, this.image.title, this.image.src);
 					 }
 				}
 		  }).bind (this);
@@ -186,7 +187,7 @@ function Item (name, count, price, sellable, buyable, activatable, modifiers, sr
 	 }
 }
 
-function itemsAdd (name, count, price, sellable, buyable, activatable, modifiers, src) {
+function itemsAdd (name, count, price, sellable, buyable, activatable, modifiers, tooltip, src) {
 	 if (items.has (name)) {
 		  var item = items.get (name);
 
@@ -194,8 +195,10 @@ function itemsAdd (name, count, price, sellable, buyable, activatable, modifiers
 				item.add (count);
 				item.updateNode ();
 		  }
+
+		  return true;
 	 } else {
-		  items.set (name, new Item (name, count, price, sellable, buyable, activatable, modifiers, src));
+		  items.set (name, new Item (name, count, price, sellable, buyable, activatable, modifiers, tooltip, src));
 	 }
 }
 
@@ -220,7 +223,12 @@ function thresholdRandomItem () {
 
 		  if (money.count >= threshold) {
 				// Add the item...
-				itemsAdd ('Fishing Rod of Doom', 1, 200, false, true, true, { drop: 2, progress: -0.5 }, 'resources/rod.svg');
+
+				var chance = Math.random ();
+
+				if (!itemsAdd ('Fishing Rod of Doom', 1, 200, false, true, true, { drop: -1, progress: -0.5 }, '-1 drop rate, -0.5 s fishing speed', 'resources/rod.svg')) {
+					 itemsAdd ('Fishing Line of Doom', 1, 200, false, true, true, { drop: 3, progress: 0.25 }, '+3 drop rate, 0.25 s fishing speed', 'resources/line.svg');
+				}
 
 				threshold += Math.pow (base_threshold, Math.ceil (Math.random () * 5));
 		  }
@@ -237,10 +245,12 @@ function click () {
 		  var chance = Math.random ();
 		  var number = dropModifier + Math.ceil (Math.random () * dropModifier * 2);
 
-		  if (chance < 0.25){
-				itemsAdd ('Shoe', number, 1, true, false, false, null, 'resources/shoe.svg')
+		  if (chance < 0.1){
+				itemsAdd ('Watch', number, 25, true, false, false, null, 'Watch', 'resources/watch.svg');
+		  } else if (chance < 0.7) {
+				itemsAdd ('Shoe', number, 1, true, false, false, null, 'Shoe', 'resources/shoe.svg');
 		  } else {
-				itemsAdd ('Fish', number, 3, true, false, false, null, 'resources/fish.svg');
+				itemsAdd ('Fish', number, 3, true, false, false, null, 'Fish','resources/fish.svg');
 		  }
 		  
 		  stopClicking ();

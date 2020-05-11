@@ -1,0 +1,3 @@
+* TODO Add buffering
+* TODO Add random items
+* TODO Add items that you can use for temporary boosts
